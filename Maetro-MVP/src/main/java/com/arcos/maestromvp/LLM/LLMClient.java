@@ -1,4 +1,4 @@
-package com.arcos.maetromvp.LLM;
+package com.arcos.maestromvp.LLM;
 
 public class LLMClient
 {

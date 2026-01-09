@@ -1,7 +1,7 @@
-package com.arcos.maetromvp.LLM;
+package com.arcos.maestromvp.LLM;
 
-import com.arcos.maetromvp.ContextProviders.UserContext.UserProfile;
-import com.arcos.maetromvp.ContextProviders.WeatherContext.WeatherContext;
+import com.arcos.maestromvp.ContextProviders.UserContext.UserProfile;
+import com.arcos.maestromvp.ContextProviders.WeatherContext.WeatherContext;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
 

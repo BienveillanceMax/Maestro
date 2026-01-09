@@ -1,4 +1,4 @@
-package com.arcos.maetromvp.ContextProviders.VisualContext;
+package com.arcos.maestromvp.ContextProviders.VisualContext;
 
 import org.springframework.stereotype.Service;
 
@@ -11,6 +11,4 @@ public class VisualContextService
         String visualDescription = "";
         return visualDescription;
     }
-
-    ;
 }

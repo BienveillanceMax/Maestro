@@ -1,4 +1,4 @@
-package com.arcos.maetromvp.ContextProviders.UserContext;
+package com.arcos.maestromvp.ContextProviders.UserContext;
 
 import org.springframework.stereotype.Component;
 

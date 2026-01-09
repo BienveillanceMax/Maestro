@@ -1,4 +1,4 @@
-package com.arcos.maetromvp.ContextProviders.WeatherContext;
+package com.arcos.maestromvp.ContextProviders.WeatherContext;
 
 public class OpenMeteoClient
 {

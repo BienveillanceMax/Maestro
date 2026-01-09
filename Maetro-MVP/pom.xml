@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.affiniti</groupId>
-    <artifactId>Maetro-MVP</artifactId>
+    <artifactId>Maestro-MVP</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Maetro-MVP</name>
     <description>Maetro-MVP</description>
