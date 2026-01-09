@@ -1,16 +1,21 @@
 package com.arcos.maestromvp.ContextProviders.WeatherContext;
 
+import com.arcos.maestromvp.ContextProviders.WeatherContext.Location.LocationProvider;
 import org.springframework.stereotype.Service;
 
 @Service
-public class WeatherContextService
-{
+public class WeatherContextService {
 
+    private final LocationProvider locationProvider;
+    private final OpenMeteoClient openMeteoClient;
 
-    public WeatherContext getLocalWeather()
-    {
-        String coordinates = ""; // As of now, this is hardcoded, when away from mvp stage, should be dynamic.
+    public WeatherContextService(LocationProvider locationProvider, OpenMeteoClient openMeteoClient) {
+        this.locationProvider = locationProvider;
+        this.openMeteoClient = openMeteoClient;
+    }
 
-        return OpenMeteoClient.getLocalWeather(coordinates);
+    public WeatherContext getLocalWeather() {
+        String coordinates = locationProvider.getCoordinates();
+        return openMeteoClient.getLocalWeather(coordinates);
     }
 }

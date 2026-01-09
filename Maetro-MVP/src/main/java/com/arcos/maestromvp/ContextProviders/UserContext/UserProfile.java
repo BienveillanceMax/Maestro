@@ -5,20 +5,22 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public record UserProfile(
-        List<String> likedGenres,
-        List<String> hatedGenres,
-        Boolean openToDiscovery,
-        String additionnalInformation
-
-)
+public class UserProfile
 {
-    public UserProfile {
+    List<String> likedGenres;
+    List<String> hatedGenres;
+    Boolean openToDiscovery;
+    String additionnalInformation;
+
+
+    public UserProfile() {
     }
 
-    public String toPromptString(){
-       //TODO
-       return "";
-   }
+    public void setUserProfile(List<String> likedGenres, List<String> hatedGenres, Boolean openToDiscovery, String additionalInformation) {
+        this.likedGenres = likedGenres;
+        this.hatedGenres = hatedGenres;
+        this.openToDiscovery = openToDiscovery;
+        this.additionnalInformation = additionalInformation;
+    }
 }
 

@@ -1,5 +1,8 @@
 package com.arcos.maestromvp.ContextProviders.UserContext;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class UserMoodService
 {
     public static String getUserMood() {
