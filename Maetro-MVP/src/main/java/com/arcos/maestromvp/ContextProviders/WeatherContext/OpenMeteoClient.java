@@ -91,39 +91,39 @@ public class OpenMeteoClient {
         return new WeatherContext(description, apparentTemperature, isDay, cloudCover, precipitation, windCondition);
     }
 
-        private String getWeatherDescription(int code, boolean isDay) {
-            return switch (code) {
-                case 0 -> isDay ? "Ensoleillé" : "Ciel dégagé";
-                case 1 -> isDay ? "Globalement ensoleillé" : "Nuit claire";
-                case 2 -> "Partiellement nuageux";
-                case 3 -> "Couvert";
-                case 45 -> "Brouillard";
-                case 48 -> "Brouillard givrant";
-                case 51 -> "Bruine légère";
-                case 53 -> "Bruine";
-                case 55 -> "Bruine forte";
-                case 56 -> "Bruine verglaçante légère";
-                case 57 -> "Bruine verglaçante";
-                case 61 -> "Pluie légère";
-                case 63 -> "Pluie";
-                case 65 -> "Pluie forte";
-                case 66 -> "Pluie verglaçante légère";
-                case 67 -> "Pluie verglaçante";
-                case 71 -> "Neige légère";
-                case 73 -> "Neige";
-                case 75 -> "Neige forte";
-                case 77 -> "Grains de neige";
-                case 80 -> "Averses de pluie légères";
-                case 81 -> "Averses de pluie";
-                case 82 -> "Violentes averses de pluie";
-                case 85 -> "Averses de neige légères";
-                case 86 -> "Averses de neige";
-                case 95 -> "Orage";
-                case 96 -> "Orage faible avec grêle";
-                case 99 -> "Orage avec grêle";
-                default -> "Inconnu";
-            };
-        }
+    private String getWeatherDescription(int code, boolean isDay) {
+        return switch (code) {
+            case 0 -> isDay ? "Sunny" : "Clear";
+            case 1 -> isDay ? "Mainly Sunny" : "Mainly Clear";
+            case 2 -> "Partly Cloudy";
+            case 3 -> "Cloudy";
+            case 45 -> "Foggy";
+            case 48 -> "Rime Fog";
+            case 51 -> "Light Drizzle";
+            case 53 -> "Drizzle";
+            case 55 -> "Heavy Drizzle";
+            case 56 -> "Light Freezing Drizzle";
+            case 57 -> "Freezing Drizzle";
+            case 61 -> "Light Rain";
+            case 63 -> "Rain";
+            case 65 -> "Heavy Rain";
+            case 66 -> "Light Freezing Rain";
+            case 67 -> "Freezing Rain";
+            case 71 -> "Light Snow";
+            case 73 -> "Snow";
+            case 75 -> "Heavy Snow";
+            case 77 -> "Snow Grains";
+            case 80 -> "Light Showers";
+            case 81 -> "Showers";
+            case 82 -> "Heavy Showers";
+            case 85 -> "Light Snow Showers";
+            case 86 -> "Snow Showers";
+            case 95 -> "Thunderstorm";
+            case 96 -> "Light Thunderstorms With Hail";
+            case 99 -> "Thunderstorm With Hail";
+            default -> "Unknown";
+        };
+    }
 
 
     private String getWindCondition(double speedKmH) {

@@ -1,0 +1,56 @@
+services:
+  # --- Ton Application Spring AI ---
+  maestro-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: maestro-app
+    environment:
+      - AZURE_VISION_ENDPOINT=${AZURE_VISION_ENDPOINT}
+      - AZURE_VISION_KEY=${AZURE_VISION_KEY}
+      - SPRING_AI_OLLAMA_BASE_URL=http://ollama:11434
+    ports:
+      - "8080:8080"
+    devices:
+      - "/dev/video0:/dev/video0"
+    # L'app ne démarre que quand le modèle est téléchargé avec succès
+    depends_on:
+      ollama-model-puller:
+        condition: service_completed_successfully
+
+  # --- Serveur Ollama ---
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 120s
+      timeout: 10s
+      retries: 5
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
+
+  # --- Service d'initialisation (télécharge Moondream) ---
+  ollama-model-puller:
+    image: ollama/ollama:latest
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=ollama:11434
+    # On attend que le serveur Ollama soit prêt avant de pull
+    depends_on:
+      ollama:
+        condition: service_healthy
+    entrypoint: /bin/sh
+    command: ["-c", "ollama pull moondream:v2 "]
+
+volumes:
+  ollama_data:
