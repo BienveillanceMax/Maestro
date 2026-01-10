@@ -22,5 +22,21 @@ public class UserProfile
         this.openToDiscovery = openToDiscovery;
         this.additionnalInformation = additionalInformation;
     }
+
+    public List<String> getLikedGenres() {
+        return likedGenres;
+    }
+
+    public List<String> getHatedGenres() {
+        return hatedGenres;
+    }
+
+    public Boolean getOpenToDiscovery() {
+        return openToDiscovery;
+    }
+
+    public String getAdditionnalInformation() {
+        return additionnalInformation;
+    }
 }
 

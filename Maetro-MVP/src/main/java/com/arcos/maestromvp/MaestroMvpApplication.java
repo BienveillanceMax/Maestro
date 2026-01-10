@@ -1,6 +1,7 @@
 package com.arcos.maestromvp;
 
 import com.arcos.maestromvp.ContextProviders.UserContext.UserProfile;
+import com.arcos.maestromvp.ContextProviders.UserContext.UserProfileManager;
 import com.arcos.maestromvp.ContextProviders.VisualContext.AzureVisualContextService;
 import com.arcos.maestromvp.ContextProviders.VisualContext.VisualContextService;
 import com.arcos.maestromvp.ContextProviders.WeatherContext.WeatherContextService;
@@ -32,13 +33,14 @@ public class MaestroMvpApplication
 
 
         UserProfile userProfile = context.getBean(UserProfile.class);
-        orchestrator.run(createUserProfile(userProfile));
+        UserProfileManager userProfileManager = context.getBean(UserProfileManager.class);
+        userProfileManager.completeUserProfile(userProfile);
+        System.out.println(userProfile.getLikedGenres());
+        System.out.println(userProfile.getHatedGenres());
+        System.out.println(userProfile.getAdditionnalInformation());
+
+        orchestrator.run(userProfile);
     }
 
-    private static UserProfile createUserProfile(UserProfile userProfile)
-    {
-        //TODO SHOULD CREATE THE USER PROFILE BY ASKING THROUGH THE CONSOLE
-        return userProfile;
-    }
 }
 

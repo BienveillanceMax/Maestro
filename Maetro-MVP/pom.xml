@@ -32,6 +32,12 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>org.jline</groupId>
+            <artifactId>jline</artifactId>
+            <version>3.26.1</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.microsoft.azure.cognitiveservices</groupId>
             <artifactId>azure-cognitiveservices-computervision</artifactId>
             <version>1.0.9-beta</version>
