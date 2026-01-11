@@ -16,20 +16,18 @@ public class ContextOrchestrator
     private WeatherContextService weatherContextService;
     private VisualContextService visualContextService;
     private UserMoodService usermoodService;
-    private UserProfile userProfile;
 
     private PromptBuilderService promptBuilder;
 
     @Autowired
-    public ContextOrchestrator(WeatherContextService weatherContextService, VisualContextService visualContextService, UserProfile userProfile, PromptBuilderService promptBuilder, UserMoodService usermoodService) {
+    public ContextOrchestrator(WeatherContextService weatherContextService, VisualContextService visualContextService, PromptBuilderService promptBuilder, UserMoodService usermoodService) {
         this.weatherContextService = weatherContextService;
         this.visualContextService = visualContextService;
-        this.userProfile = userProfile;
         this.promptBuilder = promptBuilder;
         this.usermoodService = usermoodService;
     }
 
-    public Prompt getPrompt() {
+    public Prompt getPrompt(UserProfile userProfile) {
         WeatherContext weatherContext = weatherContextService.getLocalWeather();
         String visualContext = visualContextService.getVisualContext();
         String userMood = UserMoodService.getUserMood();

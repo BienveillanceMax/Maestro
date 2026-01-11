@@ -21,7 +21,7 @@ public class Orchestrator
     }
 
     public void orchestrate(UserProfile userProfile) {
-        Prompt prompt = contextOrchestrator.getPrompt();
-        llmClient.call();
+        Prompt prompt = contextOrchestrator.getPrompt(userProfile);
+        llmClient.generateChatResponse(prompt);
     }
 }
