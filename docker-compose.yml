@@ -2,7 +2,7 @@ services:
   # --- Ton Application Spring AI ---
   maestro-app:
     build:
-      context: .
+      context: ./Maetro-MVP
       dockerfile: Dockerfile
     image: maestro-app
     environment:
@@ -11,12 +11,39 @@ services:
       - SPRING_AI_OLLAMA_BASE_URL=http://ollama:11434
     ports:
       - "8080:8080"
-    devices:
-      - "/dev/video0:/dev/video0"
-    # L'app ne démarre que quand le modèle est téléchargé avec succès
+    # No longer needs device access
     depends_on:
       ollama-model-puller:
         condition: service_completed_successfully
+
+  # --- Service Python (Visuel + Pinch Detection) ---
+  visual-service:
+    build:
+      context: ./visual-service
+      dockerfile: Dockerfile
+    image: visual-service
+    ports:
+      - "5000:5000"
+    devices:
+      - "/dev/video0:/dev/video0"
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    logging:
+      driver: "none"
+
+  # --- Webapp (Visualisation) ---
+  webapp:
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+    image: maestro-webapp
+    ports:
+      - "80:80"
+    depends_on:
+      - visual-service
+    logging:
+      driver: "none"
 
   # --- Serveur Ollama ---
   ollama:
@@ -37,6 +64,8 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [ gpu ]
+    logging:
+      driver: "none"
 
   # --- Service d'initialisation (télécharge Moondream) ---
   ollama-model-puller:
@@ -45,12 +74,13 @@ services:
       - ollama_data:/root/.ollama
     environment:
       - OLLAMA_HOST=ollama:11434
-    # On attend que le serveur Ollama soit prêt avant de pull
     depends_on:
       ollama:
         condition: service_healthy
     entrypoint: /bin/sh
     command: ["-c", "ollama pull moondream:v2 "]
+    logging:
+      driver: "none"
 
 volumes:
   ollama_data:

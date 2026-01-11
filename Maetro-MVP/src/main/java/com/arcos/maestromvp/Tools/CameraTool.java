@@ -1,51 +1,28 @@
 package com.arcos.maestromvp.Tools;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class CameraTool {
 
+    private final RestTemplate restTemplate;
+    private final String visualServiceUrl = "http://visual-service:5000/api/frame";
+
+    public CameraTool() {
+        this.restTemplate = new RestTemplate();
+    }
+
     public byte[] captureImage() throws IOException {
-        String tempFileName = "snapshot_" + System.currentTimeMillis() + ".jpg";
-        Path path = Paths.get(tempFileName);
-
-        ProcessBuilder processBuilder = new ProcessBuilder(
-                "fswebcam",
-                "--no-banner",
-                "-r", "1280x720",
-                "--jpeg", "85",
-                "-D", "1",
-                tempFileName
-        );
-
         try {
-            Process process = processBuilder.start();
-            int exitCode = process.waitFor();
-
-            if (exitCode != 0) {
-                throw new IOException("fswebcam exited with code " + exitCode);
+            byte[] imageBytes = restTemplate.getForObject(visualServiceUrl, byte[].class);
+            if (imageBytes == null || imageBytes.length == 0) {
+                throw new IOException("Received empty image from visual service");
             }
-
-            if (!Files.exists(path)) {
-                throw new IOException("Captured image file not found");
-            }
-
-            return Files.readAllBytes(path);
-
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IOException("Interrupted during image capture", e);
-        } finally {
-            // Ensure deletion happens
-            try {
-                Files.deleteIfExists(path);
-            } catch (IOException ignored) {
-                // Ignore cleanup errors
-            }
+            return imageBytes;
+        } catch (Exception e) {
+            throw new IOException("Failed to fetch image from visual service: " + e.getMessage(), e);
         }
     }
 }

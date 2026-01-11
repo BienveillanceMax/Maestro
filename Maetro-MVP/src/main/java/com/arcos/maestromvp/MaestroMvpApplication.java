@@ -39,7 +39,8 @@ public class MaestroMvpApplication
         System.out.println(userProfile.getHatedGenres());
         System.out.println(userProfile.getAdditionnalInformation());
 
-        orchestrator.run(userProfile);
+        //orchestrator.run(userProfile);
+        System.out.println("Application started. Waiting for triggers via /api/trigger");
     }
 
 }

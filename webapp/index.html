@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maestro Vision Feed</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .video-container {
+            border: 2px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
+        }
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Maestro Vision Feed</h1>
+    <div class="video-container">
+        <!-- The visual-service port is exposed on localhost:5000 in docker-compose -->
+        <!-- Note: This assumes the browser can access localhost:5000.
+             In a real production environment, this should be proxied via Nginx. -->
+        <img src="http://localhost:5000/video_feed" alt="Live Video Feed">
+    </div>
+    <p>Pinch thumb and index finger to trigger the Music Agent.</p>
+</body>
+</html>
