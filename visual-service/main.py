@@ -5,6 +5,9 @@ import threading
 import requests
 import math
 from flask import Flask, Response, jsonify
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
+import numpy as np
 
 app = Flask(__name__)
 
@@ -21,8 +24,64 @@ PINCH_THRESHOLD = 0.05
 JAVA_TRIGGER_URL = "http://maestro-app:8080/api/trigger"
 
 # --- MediaPipe Setup ---
-mp_hands = mp.solutions.hands
-mp_drawing = mp.solutions.drawing_utils
+# Initialize the Hand Landmarker
+base_options = python.BaseOptions(model_asset_path='hand_landmarker.task')
+options = vision.HandLandmarkerOptions(
+    base_options=base_options,
+    num_hands=2,
+    min_hand_detection_confidence=0.5,
+    min_hand_presence_confidence=0.5,
+    min_tracking_confidence=0.5)
+detector = vision.HandLandmarker.create_from_options(options)
+
+# Hand connections (list of tuples of indices)
+# 0 is Wrist.
+# Thumb: 0->1->2->3->4
+# Index: 0->5->6->7->8
+# Middle: 0->9->10->11->12
+# Ring: 0->13->14->15->16
+# Pinky: 0->17->18->19->20
+HAND_CONNECTIONS = [
+    (0, 1), (1, 2), (2, 3), (3, 4),
+    (0, 5), (5, 6), (6, 7), (7, 8),
+    (0, 9), (9, 10), (10, 11), (11, 12),
+    (0, 13), (13, 14), (14, 15), (15, 16),
+    (0, 17), (17, 18), (18, 19), (19, 20)
+]
+
+def draw_landmarks_on_image(rgb_image, detection_result):
+    hand_landmarks_list = detection_result.hand_landmarks
+    annotated_image = np.copy(rgb_image)
+
+    # Loop through the detected hands to visualize.
+    for hand_landmarks in hand_landmarks_list:
+        # hand_landmarks is a list of NormalizedLandmark objects
+        h, w, c = annotated_image.shape
+
+        # Draw connections
+        for connection in HAND_CONNECTIONS:
+            start_idx = connection[0]
+            end_idx = connection[1]
+
+            start_point = hand_landmarks[start_idx]
+            end_point = hand_landmarks[end_idx]
+
+            # Convert normalized coordinates to pixel coordinates
+            start_x = int(start_point.x * w)
+            start_y = int(start_point.y * h)
+            end_x = int(end_point.x * w)
+            end_y = int(end_point.y * h)
+
+            cv2.line(annotated_image, (start_x, start_y), (end_x, end_y), (224, 224, 224), 2)
+
+        # Draw landmarks
+        for landmark in hand_landmarks:
+             cx = int(landmark.x * w)
+             cy = int(landmark.y * h)
+             cv2.circle(annotated_image, (cx, cy), 4, (0, 0, 255), -1)
+             cv2.circle(annotated_image, (cx, cy), 2, (255, 255, 255), -1)
+
+    return annotated_image
 
 def calculate_distance(p1, p2):
     return math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2)
@@ -36,61 +95,63 @@ def camera_loop():
         print("Error: Could not open video device.")
         return
 
-    with mp_hands.Hands(
-        min_detection_confidence=0.5,
-        min_tracking_confidence=0.5) as hands:
+    while True:
+        success, frame = cap.read()
+        if not success:
+            print("Ignoring empty camera frame.")
+            time.sleep(0.1)
+            continue
 
-        while True:
-            success, frame = cap.read()
-            if not success:
-                print("Ignoring empty camera frame.")
-                time.sleep(0.1)
-                continue
+        # Convert BGR to RGB
+        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-            # Convert BGR to RGB
-            image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            image.flags.writeable = False
-            results = hands.process(image)
-            image.flags.writeable = True
-            image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        # Create MediaPipe Image
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image)
 
-            triggered_this_frame = False
+        # Detect hands
+        detection_result = detector.detect(mp_image)
 
-            if results.multi_hand_landmarks:
-                for hand_landmarks in results.multi_hand_landmarks:
-                    mp_drawing.draw_landmarks(
-                        image,
-                        hand_landmarks,
-                        mp_hands.HAND_CONNECTIONS)
+        # Draw landmarks manually on BGR image
+        # We use 'frame' which is BGR, but draw_landmarks_on_image expects RGB/BGR?
+        # My implementation creates a copy and draws on it.
+        # Let's pass the BGR frame to it so the result is BGR.
+        # But detection_result is based on the image passed to detect() which was RGB.
+        # Coordinates are normalized so it doesn't matter.
+        annotated_image = draw_landmarks_on_image(frame, detection_result)
 
-                    # Get Thumb and Index tip coordinates (normalized 0-1)
-                    thumb_tip = hand_landmarks.landmark[mp_hands.HandLandmark.THUMB_TIP]
-                    index_tip = hand_landmarks.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP]
+        triggered_this_frame = False
 
-                    distance = calculate_distance(thumb_tip, index_tip)
+        if detection_result.hand_landmarks:
+            for hand_landmarks in detection_result.hand_landmarks:
+                # Get Thumb and Index tip coordinates (normalized 0-1)
+                # Thumb tip is index 4, Index tip is index 8
+                thumb_tip = hand_landmarks[4]
+                index_tip = hand_landmarks[8]
 
-                    # Detect Pinch
-                    if distance < PINCH_THRESHOLD:
-                        # Draw a circle on the pinch point
-                        h, w, c = image.shape
-                        cx = int((thumb_tip.x + index_tip.x) / 2 * w)
-                        cy = int((thumb_tip.y + index_tip.y) / 2 * h)
-                        cv2.circle(image, (cx, cy), 15, (0, 255, 0), cv2.FILLED)
+                distance = calculate_distance(thumb_tip, index_tip)
 
-                        current_time = time.time()
-                        if current_time - last_trigger_time > TRIGGER_COOLDOWN:
-                            triggered_this_frame = True
-                            last_trigger_time = current_time
+                # Detect Pinch
+                if distance < PINCH_THRESHOLD:
+                    # Draw a circle on the pinch point
+                    h, w, c = annotated_image.shape
+                    cx = int((thumb_tip.x + index_tip.x) / 2 * w)
+                    cy = int((thumb_tip.y + index_tip.y) / 2 * h)
+                    cv2.circle(annotated_image, (cx, cy), 15, (0, 255, 0), cv2.FILLED)
 
-            # Send trigger in a separate thread to not block the video loop
-            if triggered_this_frame:
-                threading.Thread(target=send_trigger).start()
+                    current_time = time.time()
+                    if current_time - last_trigger_time > TRIGGER_COOLDOWN:
+                        triggered_this_frame = True
+                        last_trigger_time = current_time
 
-            with lock:
-                output_frame = image.copy()
+        # Send trigger in a separate thread to not block the video loop
+        if triggered_this_frame:
+            threading.Thread(target=send_trigger).start()
 
-            # Sleep slightly to avoid hogging CPU if FPS is high (though camera usually limits it)
-            time.sleep(0.01)
+        with lock:
+            output_frame = annotated_image.copy()
+
+        # Sleep slightly to avoid hogging CPU if FPS is high (though camera usually limits it)
+        time.sleep(0.01)
 
 def send_trigger():
     print("Pinch detected! Sending trigger...")
