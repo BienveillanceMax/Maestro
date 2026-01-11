@@ -1,5 +1,4 @@
 services:
-  # --- Ton Application Spring AI ---
   maestro-app:
     build:
       context: ./Maetro-MVP
@@ -11,12 +10,10 @@ services:
       - SPRING_AI_OLLAMA_BASE_URL=http://ollama:11434
     ports:
       - "8080:8080"
-    # No longer needs device access
     depends_on:
       ollama-model-puller:
         condition: service_completed_successfully
 
-  # --- Service Python (Visuel + Pinch Detection) ---
   visual-service:
     build:
       context: ./visual-service
@@ -32,7 +29,6 @@ services:
     logging:
       driver: "none"
 
-  # --- Webapp (Visualisation) ---
   webapp:
     build:
       context: ./webapp
@@ -45,7 +41,6 @@ services:
     logging:
       driver: "none"
 
-  # --- Serveur Ollama ---
   ollama:
     image: ollama/ollama:latest
     ports:
