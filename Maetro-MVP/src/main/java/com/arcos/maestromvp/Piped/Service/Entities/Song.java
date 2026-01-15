@@ -1,4 +1,4 @@
-package com.arcos.maestromvp.Spotify.Service.Entities;
+package com.arcos.maestromvp.Piped.Service.Entities;
 
 import lombok.Getter;
 

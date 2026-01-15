@@ -6,9 +6,12 @@ import com.arcos.maestromvp.ContextProviders.VisualContext.AzureVisualContextSer
 import com.arcos.maestromvp.ContextProviders.VisualContext.VisualContextService;
 import com.arcos.maestromvp.ContextProviders.WeatherContext.WeatherContextService;
 import com.arcos.maestromvp.Orchestrators.Orchestrator;
+import com.arcos.maestromvp.Piped.Service.PipedService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
+
+import java.util.List;
 
 @SpringBootApplication
 public class MaestroMvpApplication
@@ -33,15 +36,15 @@ public class MaestroMvpApplication
 
 
         UserProfile userProfile = context.getBean(UserProfile.class);
-        UserProfileManager userProfileManager = context.getBean(UserProfileManager.class);
-        userProfileManager.completeUserProfile(userProfile);
-        System.out.println(userProfile.getLikedGenres());
-        System.out.println(userProfile.getHatedGenres());
-        System.out.println(userProfile.getAdditionnalInformation());
+        userProfile.setUserProfile(List.of("Classical"),List.of("Rap"),Boolean.FALSE,"I love Rachmanivoff");
+        //UserProfileManager userProfileManager = context.getBean(UserProfileManager.class);
+        //userProfileManager.completeUserProfile(userProfile);
 
-        //orchestrator.run(userProfile);
+        PipedService pipedService = context.getBean(PipedService.class);
+        System.out.println( pipedService.searchAndGetUrl("Rachmaninov"));;
+
+
+        orchestrator.run(userProfile);
         System.out.println("Application started. Waiting for triggers via /api/trigger");
     }
-
 }
-

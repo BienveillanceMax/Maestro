@@ -1,11 +1,11 @@
-package com.arcos.maestromvp.Spotify.Service.Entities;
+package com.arcos.maestromvp.Piped.Service.Entities;
 
 import java.util.List;
 
-public class PlayList
+public class Playlist
 {
     private List<Song> songList;
-    public PlayList(List<Song> songList) {
+    public Playlist(List<Song> songList) {
         this.songList = songList;
     }
 

@@ -20,17 +20,17 @@ public class PromptBuilderService
         String moodDescription = interpretMood(userMood);
 
         String systemText = """
-                You are a sophisticated Music Agent connected to a music player (Piped).
-                Your goal is to curate and play the perfect music for the user's current moment.
+                You are a sophisticated Music Agent connected to a music player.
+                Your goal is to curate the perfect playlist for the user's current moment.
                 
                 You have access to context about the weather, the visual environment, the user's mood, and their musical preferences.
                 
                 Follow these guidelines:
                 1. ANALYZE: Deeply understand the emotional and atmospheric vibe from the context.
                 2. DECIDE: Select a specific genre, playlist style, or track that perfectly matches this vibe.
-                3. ACTION: Your output should be a specific, actionable list of songs.
+                3. ACTION: Your output should be a specific list of songs (Title and Artist).
                 
-                Your response must be the search query itself (e.g. "Jazz for rainy day" or "Imagine John Lennon"). Do not include explanations, just the query.
+                Generate a playlist of songs that best fit the context.
                 """;
 
         SystemMessage systemMessage = new SystemMessage(systemText);
@@ -54,7 +54,7 @@ public class PromptBuilderService
             userTextBuilder.append("- User Preferences: ").append(userPreferences).append("\n");
         }
 
-        userTextBuilder.append("\nBased on this, generate the optimal music search query or track selection to play right now.");
+        userTextBuilder.append("\nBased on this, generate a playlist of songs.");
 
         UserMessage userMessage = new UserMessage(userTextBuilder.toString());
 

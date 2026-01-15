@@ -6,6 +6,7 @@ import com.arcos.maestromvp.Piped.Presentation.Responses.PipedStreamResponse;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.Duration;
@@ -14,13 +15,14 @@ import java.time.Duration;
 public class PipedApiClient {
 
     private final RestClient restClient;
+    private final String baseUrl = "https://pipedapi.adminforge.de";
     public PipedApiClient(RestClient.Builder builder) {
 
         JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory();
         requestFactory.setReadTimeout(Duration.ofSeconds(10));
 
         this.restClient = builder
-                .baseUrl("https://pipedapi.kavin.rocks")
+                .baseUrl(baseUrl)
                 .requestFactory(requestFactory)
                 .defaultHeader("User-Agent", "MaestroMvp/1.0")
                 .build();

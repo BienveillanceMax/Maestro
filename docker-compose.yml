@@ -8,13 +8,14 @@ services:
       - AZURE_VISION_ENDPOINT=${AZURE_VISION_ENDPOINT}
       - AZURE_VISION_KEY=${AZURE_VISION_KEY}
       - SPRING_AI_OLLAMA_BASE_URL=http://ollama:11434
+      - MISTRAL_API_KEY
       - CLIENT_ID=${SPOTIFY_CLIENT_ID}
       - CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
     ports:
       - "8080:8080"
     depends_on:
       visual-service:
-        condition: service_completed_successfully
+        condition: service_started
       ollama-model-puller:
         condition: service_completed_successfully
 
