@@ -49,13 +49,52 @@ public class LocalAudioOutput implements Runnable {
             log.info("Audio line started successfully.");
 
             long frameDuration = format.frameDuration();
+            int frameSize = line.getFormat().getFrameSize();
+            if (frameSize == -1) {
+                frameSize = 4; // Default fallback if unknown, assuming stereo 16-bit
+            }
+            byte[] leftoverBuffer = new byte[frameSize];
+            int leftoverCount = 0;
 
             while (running) {
                 AudioFrame frame = audioPlayer.provide();
 
                 if (frame != null) {
                     try {
-                        line.write(frame.getData(), 0, frame.getDataLength());
+                        byte[] data = frame.getData();
+                        int offset = 0;
+                        int length = frame.getDataLength();
+
+                        // Handle leftover bytes from previous frame
+                        if (leftoverCount > 0) {
+                            int needed = frameSize - leftoverCount;
+                            if (length >= needed) {
+                                System.arraycopy(data, offset, leftoverBuffer, leftoverCount, needed);
+                                line.write(leftoverBuffer, 0, frameSize);
+                                leftoverCount = 0;
+                                offset += needed;
+                                length -= needed;
+                            } else {
+                                System.arraycopy(data, offset, leftoverBuffer, leftoverCount, length);
+                                leftoverCount += length;
+                                length = 0;
+                            }
+                        }
+
+                        if (length > 0) {
+                            int writeLength = (length / frameSize) * frameSize;
+                            if (writeLength > 0) {
+                                line.write(data, offset, writeLength);
+                                offset += writeLength;
+                                length -= writeLength;
+                            }
+
+                            // Store remaining bytes that didn't form a full frame
+                            if (length > 0) {
+                                System.arraycopy(data, offset, leftoverBuffer, leftoverCount, length);
+                                leftoverCount += length;
+                            }
+                        }
                     } catch (Exception e) {
                         log.error("Error writing to audio line", e);
                     }
