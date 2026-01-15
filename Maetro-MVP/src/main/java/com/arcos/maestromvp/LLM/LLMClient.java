@@ -22,10 +22,8 @@ public class LLMClient
         return chatClient.prompt(prompt)
                 .tools()
                 .call()
-                .responseEntity(Song.class)
+                .responseEntity(PlayList.class)
                 .getEntity();
     }
-    
-    public St
 
 }
