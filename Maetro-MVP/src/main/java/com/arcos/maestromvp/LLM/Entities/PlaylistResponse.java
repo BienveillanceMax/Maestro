@@ -1,6 +1,5 @@
 package com.arcos.maestromvp.LLM.Entities;
 
-import com.arcos.maestromvp.Piped.Service.Entities.Song;
 import lombok.Getter;
 import lombok.Setter;
 

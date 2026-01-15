@@ -6,7 +6,6 @@ import com.arcos.maestromvp.ContextProviders.VisualContext.AzureVisualContextSer
 import com.arcos.maestromvp.ContextProviders.VisualContext.VisualContextService;
 import com.arcos.maestromvp.ContextProviders.WeatherContext.WeatherContextService;
 import com.arcos.maestromvp.Orchestrators.Orchestrator;
-import com.arcos.maestromvp.Piped.Service.PipedService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
@@ -39,9 +38,6 @@ public class MaestroMvpApplication
         userProfile.setUserProfile(List.of("Classical"),List.of("Rap"),Boolean.FALSE,"I love Rachmanivoff");
         //UserProfileManager userProfileManager = context.getBean(UserProfileManager.class);
         //userProfileManager.completeUserProfile(userProfile);
-
-        PipedService pipedService = context.getBean(PipedService.class);
-        System.out.println( pipedService.searchAndGetUrl("Rachmaninov"));;
 
 
         orchestrator.run(userProfile);
