@@ -1,5 +1,6 @@
 package com.arcos.maestromvp.ContextProviders.UserContext;
 
+import com.arcos.maestromvp.ContextProviders.UserContext.Presentation.Dto.UserProfileDto;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,6 +22,13 @@ public class UserProfile
         this.hatedGenres = hatedGenres;
         this.openToDiscovery = openToDiscovery;
         this.additionnalInformation = additionalInformation;
+    }
+
+    public void setUserProfile(UserProfileDto dto) {
+        likedGenres = dto.likedGenres();
+        hatedGenres = dto.hatedGenres();
+        openToDiscovery = dto.openToDiscovery();
+        additionnalInformation = dto.additionnalInformation();
     }
 
     public List<String> getLikedGenres() {

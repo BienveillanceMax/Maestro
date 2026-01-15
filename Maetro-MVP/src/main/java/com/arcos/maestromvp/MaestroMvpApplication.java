@@ -31,14 +31,6 @@ public class MaestroMvpApplication
 
         System.out.println(azureVisualContextService.getImageTags());
 
-
-        UserProfile userProfile = context.getBean(UserProfile.class);
-        UserProfileManager userProfileManager = context.getBean(UserProfileManager.class);
-        userProfileManager.completeUserProfile(userProfile);
-        System.out.println(userProfile.getLikedGenres());
-        System.out.println(userProfile.getHatedGenres());
-        System.out.println(userProfile.getAdditionnalInformation());
-
         //orchestrator.run(userProfile);
         System.out.println("Application started. Waiting for triggers via /api/trigger");
     }
