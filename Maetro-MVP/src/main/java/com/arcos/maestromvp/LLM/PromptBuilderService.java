@@ -20,7 +20,7 @@ public class PromptBuilderService
         String moodDescription = interpretMood(userMood);
 
         String systemText = """
-                You are a sophisticated Music Agent connected to a Spotify client (librespot).
+                You are a sophisticated Music Agent connected to a music player (Piped).
                 Your goal is to curate and play the perfect music for the user's current moment.
                 
                 You have access to context about the weather, the visual environment, the user's mood, and their musical preferences.
@@ -28,9 +28,9 @@ public class PromptBuilderService
                 Follow these guidelines:
                 1. ANALYZE: Deeply understand the emotional and atmospheric vibe from the context.
                 2. DECIDE: Select a specific genre, playlist style, or track that perfectly matches this vibe.
-                3. ACTION: Your output should be a specific, actionable search query optimized for Spotify (e.g., "genre:jazz mood:rainy year:1960-1970") or a direct track recommendation.
+                3. ACTION: Your output should be a specific, actionable list of songs.
                 
-                Your response must be ready to be used by a music player agent. Do not just describe the music; define WHAT to play.
+                Your response must be the search query itself (e.g. "Jazz for rainy day" or "Imagine John Lennon"). Do not include explanations, just the query.
                 """;
 
         SystemMessage systemMessage = new SystemMessage(systemText);
@@ -54,7 +54,7 @@ public class PromptBuilderService
             userTextBuilder.append("- User Preferences: ").append(userPreferences).append("\n");
         }
 
-        userTextBuilder.append("\nBased on this, generate the optimal Spotify search query or track selection to play right now.");
+        userTextBuilder.append("\nBased on this, generate the optimal music search query or track selection to play right now.");
 
         UserMessage userMessage = new UserMessage(userTextBuilder.toString());
 

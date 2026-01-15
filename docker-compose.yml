@@ -13,8 +13,6 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      spotifyd:
-        condition: service_completed_successfully
       visual-service:
         condition: service_completed_successfully
       ollama-model-puller:
@@ -47,26 +45,10 @@ services:
     logging:
       driver: "none"
 
-  #spotifyd:
-    # image: gallows/spotifyd:latest
-    #container_name: spotifyd
-    #network_mode: host
-        #devices:
-      #- /dev/snd:/dev/snd
-        #volumes:
-      #- ./spotifyd.conf:/etc/spotifyd.conf:ro
-    #restart: always
-        #environment:
-        #- SPOTIFY_USERNAME=${SPOTIFY_USER}
-        #- SPOTIFY_PASSWORD=${SPOTIFY_PASSWORD}
-        #- SPOTIFY_DEVICE_NAME=${SPOTIFY_DEVICE_NAME}
-      #- SPOTIFY_BITRATE=320
-
-
   ollama:
     image: ollama/ollama:latest
     ports:
-      - "11434:11434"f
+      - "11434:11434"
     volumes:
       - ollama_data:/root/.ollama
     healthcheck:

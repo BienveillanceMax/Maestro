@@ -1,5 +1,8 @@
 package com.arcos.maestromvp.Spotify.Service.Entities;
 
+import lombok.Getter;
+
+@Getter
 public class Song
 {
     private String id;
@@ -8,4 +11,5 @@ public class Song
     public String getUri() {
         return "spotify:track:" + this.id;
     }
+
 }
