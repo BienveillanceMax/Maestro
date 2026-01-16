@@ -35,12 +35,30 @@ public class LocalAudioOutput implements Runnable {
             );
 
             DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
+            boolean performByteSwap = false;
 
             if (!AudioSystem.isLineSupported(info)) {
-                log.warn("Audio line not supported (No audio device found?). Playback will be simulated (silent).");
-                // We consume frames anyway to drain the player
-                consumeFramesWithoutOutput();
-                return;
+                // Try requesting Little Endian
+                AudioFormat littleEndianFormat = new AudioFormat(
+                        format.sampleRate,
+                        16,
+                        format.channelCount,
+                        true, // signed
+                        false // little-endian
+                );
+                DataLine.Info littleEndianInfo = new DataLine.Info(SourceDataLine.class, littleEndianFormat);
+
+                if (AudioSystem.isLineSupported(littleEndianInfo)) {
+                    log.info("Big-endian audio not supported, falling back to little-endian with software conversion.");
+                    audioFormat = littleEndianFormat;
+                    info = littleEndianInfo;
+                    performByteSwap = true;
+                } else {
+                    log.warn("Audio line not supported (No audio device found?). Playback will be simulated (silent).");
+                    // We consume frames anyway to drain the player
+                    consumeFramesWithoutOutput();
+                    return;
+                }
             }
 
             line = (SourceDataLine) AudioSystem.getLine(info);
@@ -64,6 +82,17 @@ public class LocalAudioOutput implements Runnable {
                         byte[] data = frame.getData();
                         int offset = 0;
                         int length = frame.getDataLength();
+
+                        // We are about to consume 'data'. If we need to swap bytes, we should do it now.
+                        // Since 'data' comes from Lavaplayer's pool, we can modify it in place if we are sure
+                        // we are the only consumer. To be safe/clean, we swap in place.
+                        if (performByteSwap) {
+                            for (int i = 0; i < length - 1; i += 2) {
+                                byte temp = data[i];
+                                data[i] = data[i+1];
+                                data[i+1] = temp;
+                            }
+                        }
 
                         // Handle leftover bytes from previous frame
                         if (leftoverCount > 0) {
