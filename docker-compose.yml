@@ -42,12 +42,13 @@ services:
         - VITE_USER_PROFILE_URL=http://localhost:8080/api/profile 
     image: maestro-front
     ports:
-      - "80:80"
+      - "3000:80"
     depends_on:
       - visual-service
       - maestro-app
     logging:
       driver: "none"
+
   ollama:
     image: ollama/ollama:latest
     ports:

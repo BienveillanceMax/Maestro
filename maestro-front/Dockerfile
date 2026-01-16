@@ -1,12 +1,14 @@
 # Etape 1 : Build de l'application
 FROM node:20-alpine as builder
 
+WORKDIR /app
+
 # Copie des fichiers de dépendances
 COPY package.json package-lock.json ./
 RUN npm install
 
 # Copie du code source
-COPY src .
+COPY . .
 
 # --- GESTION DES VARIABLES D'ENVIRONNEMENT ---
 # On définit des arguments de build (ARG)
