@@ -4,6 +4,10 @@ services:
       context: ./Maetro-MVP
       dockerfile: Dockerfile
     image: maestro-app
+    devices:
+      - "/dev/snd:/dev/snd"  # Donne accès direct aux périphériques audio
+    group_add:
+      - audio
     environment:
       - AZURE_VISION_ENDPOINT=${AZURE_VISION_ENDPOINT}
       - AZURE_VISION_KEY=${AZURE_VISION_KEY}
@@ -14,8 +18,6 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      visual-service:
-        condition: service_started
       ollama-model-puller:
         condition: service_completed_successfully
 
@@ -26,6 +28,10 @@ services:
     image: visual-service
     ports:
       - "5000:5000"
+    depends_on:
+      maestro-app:
+        condition: service_started
+
     devices:
       - "/dev/video0:/dev/video0"
     environment:

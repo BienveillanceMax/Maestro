@@ -7,7 +7,10 @@ import org.springframework.ai.chat.messages.UserMessage;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class PromptBuilderService
@@ -18,6 +21,7 @@ public class PromptBuilderService
         String userPreferences = interpretUserPreferences(userProfile);
         String visualDescription = interpretVisuals(visualContext);
         String moodDescription = interpretMood(userMood);
+        String timeAndDateDescription = interpetTimeAndDate();
 
         String systemText = """
                 You are a sophisticated Music Agent connected to a music player.
@@ -54,12 +58,21 @@ public class PromptBuilderService
             userTextBuilder.append("- User Preferences: ").append(userPreferences).append("\n");
         }
 
+        userTextBuilder.append(timeAndDateDescription).append("\n");
+
         userTextBuilder.append("\nBased on this, generate a playlist of songs.");
 
         UserMessage userMessage = new UserMessage(userTextBuilder.toString());
 
         return new Prompt(List.of(systemMessage, userMessage));
     }
+
+
+    private String interpetTimeAndDate() {
+        LocalDateTime now = LocalDateTime.now();
+        return "- Current date and time : " + now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.FRENCH));
+    }
+
 
     private String interpretWeather(WeatherContext context) {
         if (context == null) return "Unknown weather.";
@@ -83,7 +96,6 @@ public class PromptBuilderService
         } else {
             sb.append(", Clear sky");
         }
-
         return sb.toString();
     }
 
