@@ -31,7 +31,7 @@ public class TriggerController {
         System.out.println("Received trigger from Visual Service.");
 
         // Ensure profile is up to date (logic from main)
-        userProfileManager.completeUserProfile(userProfile);
+        //userProfileManager.completeUserProfile(userProfile);
 
         // Run the orchestrator logic
         // Note: Ideally this should be async if it takes long time,

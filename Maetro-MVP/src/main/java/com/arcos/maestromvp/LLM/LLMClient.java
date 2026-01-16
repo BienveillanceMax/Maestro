@@ -1,13 +1,14 @@
 package com.arcos.maestromvp.LLM;
 
-import com.arcos.maestromvp.Spotify.Service.Entities.Song;
-import com.arcos.maestromvp.Spotify.Service.Entities.PlayList;
+import com.arcos.maestromvp.LLM.Entities.PlaylistResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.prompt.Prompt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class LLMClient
 {
@@ -18,11 +19,12 @@ public class LLMClient
         this.chatClient = mistralChatClient;
     }
 
-    public PlayList generateChatResponse(Prompt prompt) {
+    public PlaylistResponse generateChatResponse(Prompt prompt) {
+        log.info(prompt.getContents());
         return chatClient.prompt(prompt)
                 .tools()
                 .call()
-                .responseEntity(PlayList.class)
+                .responseEntity(PlaylistResponse.class)
                 .getEntity();
     }
 

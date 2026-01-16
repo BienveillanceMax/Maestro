@@ -10,6 +10,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 
+import java.util.List;
+
 @SpringBootApplication
 public class MaestroMvpApplication
 {
@@ -31,7 +33,14 @@ public class MaestroMvpApplication
 
         System.out.println(azureVisualContextService.getImageTags());
 
-        //orchestrator.run(userProfile);
+
+        UserProfile userProfile = context.getBean(UserProfile.class);
+        userProfile.setUserProfile(List.of("Classical"),List.of("Rap"),Boolean.FALSE,"I love Rachmanivoff");
+        //UserProfileManager userProfileManager = context.getBean(UserProfileManager.class);
+        //userProfileManager.completeUserProfile(userProfile);
+
+
+        orchestrator.run(userProfile);
         System.out.println("Application started. Waiting for triggers via /api/trigger");
     }
 

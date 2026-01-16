@@ -20,6 +20,8 @@ last_trigger_time = 0
 TRIGGER_COOLDOWN = 5.0
 # Threshold for pinch (distance between thumb and index tip)
 PINCH_THRESHOLD = 0.05
+# Duration to hold pinch before triggering (in seconds)
+TRIGGER_HOLD_TIME = 1.0
 # URL of the Java service trigger
 JAVA_TRIGGER_URL = "http://maestro-app:8080/api/trigger"
 
@@ -95,6 +97,8 @@ def camera_loop():
         print("Error: Could not open video device.")
         return
 
+    pinch_start_time = 0
+
     while True:
         success, frame = cap.read()
         if not success:
@@ -112,14 +116,11 @@ def camera_loop():
         detection_result = detector.detect(mp_image)
 
         # Draw landmarks manually on BGR image
-        # We use 'frame' which is BGR, but draw_landmarks_on_image expects RGB/BGR?
-        # My implementation creates a copy and draws on it.
-        # Let's pass the BGR frame to it so the result is BGR.
-        # But detection_result is based on the image passed to detect() which was RGB.
-        # Coordinates are normalized so it doesn't matter.
         annotated_image = draw_landmarks_on_image(frame, detection_result)
 
         triggered_this_frame = False
+        pinch_detected_now = False
+        pinch_center = None
 
         if detection_result.hand_landmarks:
             for hand_landmarks in detection_result.hand_landmarks:
@@ -132,16 +133,39 @@ def camera_loop():
 
                 # Detect Pinch
                 if distance < PINCH_THRESHOLD:
-                    # Draw a circle on the pinch point
+                    pinch_detected_now = True
                     h, w, c = annotated_image.shape
                     cx = int((thumb_tip.x + index_tip.x) / 2 * w)
                     cy = int((thumb_tip.y + index_tip.y) / 2 * h)
-                    cv2.circle(annotated_image, (cx, cy), 15, (0, 255, 0), cv2.FILLED)
+                    pinch_center = (cx, cy)
+                    break # Process only one pinch
 
-                    current_time = time.time()
-                    if current_time - last_trigger_time > TRIGGER_COOLDOWN:
-                        triggered_this_frame = True
-                        last_trigger_time = current_time
+        if pinch_detected_now:
+            if pinch_start_time == 0:
+                pinch_start_time = time.time()
+
+            elapsed = time.time() - pinch_start_time
+
+            if elapsed >= TRIGGER_HOLD_TIME:
+                current_time = time.time()
+                if current_time - last_trigger_time > TRIGGER_COOLDOWN:
+                    triggered_this_frame = True
+                    last_trigger_time = current_time
+                    # Visual Feedback: Green (Triggered)
+                    cv2.circle(annotated_image, pinch_center, 20, (0, 255, 0), cv2.FILLED)
+                else:
+                     # Visual Feedback: Blue (Cooldown)
+                     cv2.circle(annotated_image, pinch_center, 20, (255, 0, 0), cv2.FILLED)
+            else:
+                 # Visual Feedback: Yellow (Charging)
+                 # Radius grows from 5 to 20
+                 radius = int(5 + (elapsed / TRIGGER_HOLD_TIME) * 15)
+                 cv2.circle(annotated_image, pinch_center, radius, (0, 255, 255), cv2.FILLED)
+                 # Target size ring
+                 cv2.circle(annotated_image, pinch_center, 20, (255, 255, 255), 2)
+        else:
+            # Reset pinch timer if pinch is lost
+            pinch_start_time = 0
 
         # Send trigger in a separate thread to not block the video loop
         if triggered_this_frame:
