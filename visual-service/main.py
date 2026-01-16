@@ -1,4 +1,5 @@
 import cv2
+import os
 import mediapipe as mp
 import time
 import threading
@@ -23,7 +24,7 @@ PINCH_THRESHOLD = 0.05
 # Duration to hold pinch before triggering (in seconds)
 TRIGGER_HOLD_TIME = 1.0
 # URL of the Java service trigger
-JAVA_TRIGGER_URL = "http://locahost:8080/api/trigger"
+JAVA_TRIGGER_URL = os.environ.get("JAVA_BACKEND_URL", "http://localhost:8080/api/trigger")
 
 # --- MediaPipe Setup ---
 # Initialize the Hand Landmarker
@@ -90,12 +91,20 @@ def calculate_distance(p1, p2):
 
 def camera_loop():
     global output_frame, last_trigger_time
-    cap = cv2.VideoCapture(0)
+    cap = None
 
-    # Check if camera opened successfully
-    if not cap.isOpened():
-        print("Error: Could not open video device.")
-        return
+    # Retry loop for camera connection
+    while True:
+        try:
+            cap = cv2.VideoCapture(0)
+            if cap.isOpened():
+                print("Camera initialized successfully.")
+                break
+            else:
+                print("Error: Could not open video device. Retrying in 2 seconds...")
+        except Exception as e:
+             print(f"Exception opening camera: {e}")
+        time.sleep(2)
 
     pinch_start_time = 0
 

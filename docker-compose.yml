@@ -20,6 +20,7 @@ services:
       - MISTRAL_API_KEY
       - CLIENT_ID=${SPOTIFY_CLIENT_ID}
       - CLIENT_SECRET=${SPOTIFY_CLIENT_SECRET}
+      - MAESTRO_VISUAL_URL=http://visual-service:5000/api/frame
     ports:
       - "8080:8080"
     networks:
@@ -36,6 +37,8 @@ services:
     image: visual-service
     ports:
       - "5000:5000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       maestro-app:
         condition: service_started
@@ -44,7 +47,8 @@ services:
     devices:
       - "/dev/video0:/dev/video0"
     environment:
-      - PYTHONUNBUFFERED=1f
+      - PYTHONUNBUFFERED=1
+      - JAVA_BACKEND_URL=http://host.docker.internal:8080/api/trigger
     restart: unless-stopped
     logging:
       driver: "none"

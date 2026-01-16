@@ -2,6 +2,7 @@ package com.arcos.maestromvp.Tools;
 
 import java.io.IOException;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpMethod;
@@ -10,7 +11,9 @@ import org.springframework.http.HttpMethod;
 public class CameraTool {
 
     private final RestTemplate restTemplate;
-    private final String visualServiceUrl = "http://localhost:5000/api/frame";
+
+    @Value("${maestro.visual.url:http://localhost:5000/api/frame}")
+    private String visualServiceUrl;
 
     public CameraTool() {
         this.restTemplate = new RestTemplate();

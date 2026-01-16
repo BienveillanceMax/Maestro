@@ -22,6 +22,9 @@ RUN apt-get update && \
     apt-get install -y fswebcam libasound2 alsa-utils libasound2-plugins && \
     rm -rf /var/lib/apt/lists/*
 
+# Configure ALSA to use PulseAudio by default
+RUN echo 'pcm.!default { type pulse } ctl.!default { type pulse }' > /etc/asound.conf
+
 # Copie du jar depuis le builder
 COPY --from=builder /app/target/*.jar app.jar
 
