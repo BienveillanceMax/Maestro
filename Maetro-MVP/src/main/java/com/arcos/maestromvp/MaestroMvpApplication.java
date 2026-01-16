@@ -43,4 +43,6 @@ public class MaestroMvpApplication
         orchestrator.run(userProfile);
         System.out.println("Application started. Waiting for triggers via /api/trigger");
     }
+
 }
+

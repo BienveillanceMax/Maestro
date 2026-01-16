@@ -40,18 +40,21 @@ services:
     logging:
       driver: "none"
 
-  webapp:
+  maestro-front:
     build:
-      context: ./webapp
+      context: ./maestro-front 
       dockerfile: Dockerfile
-    image: maestro-webapp
+      args:
+        - VITE_VIDEO_URL=http://localhost:5000/video_feed
+        - VITE_USER_PROFILE_URL=http://localhost:8080/api/profile 
+    image: maestro-front
     ports:
       - "80:80"
     depends_on:
       - visual-service
+      - maestro-app
     logging:
       driver: "none"
-
   ollama:
     image: ollama/ollama:latest
     ports:
