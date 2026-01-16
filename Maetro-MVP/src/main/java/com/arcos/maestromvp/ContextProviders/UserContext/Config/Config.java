@@ -13,8 +13,7 @@ public class Config implements WebMvcConfigurer {
         registry.addMapping("/**") // Applique la règle sur toutes les URL de l'API
                 .allowedOrigins(
                         "http://localhost",       // Ton front Docker (port 80)
-                        "http://localhost:30",
-                        "http://localhost:50",// Explicite
+                        "http://localhost:3000",
                         "http://127.0.0.1"        // Parfois le navigateur utilise l'IP
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Autorise tout

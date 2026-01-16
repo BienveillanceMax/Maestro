@@ -10,7 +10,7 @@ import org.springframework.http.HttpMethod;
 public class CameraTool {
 
     private final RestTemplate restTemplate;
-    private final String visualServiceUrl = "http://visual-service:5000/api/frame";
+    private final String visualServiceUrl = "http://localhost:5000/api/frame";
 
     public CameraTool() {
         this.restTemplate = new RestTemplate();
