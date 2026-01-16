@@ -217,10 +217,18 @@ def get_frame():
     global output_frame
     with lock:
         if output_frame is None:
+             print("API: No frame captured yet.")
              return "No frame captured yet", 503
+
         (flag, encodedImage) = cv2.imencode(".jpg", output_frame)
 
-    return Response(bytearray(encodedImage), mimetype="image/jpeg")
+        if not flag:
+            print("API: Image encoding failed.")
+            return "Image encoding failed", 500
+
+    image_bytes = encodedImage.tobytes()
+    print(f"API: Serving frame. Size: {len(image_bytes)} bytes")
+    return Response(image_bytes, mimetype="image/jpeg")
 
 if __name__ == '__main__':
     # Start camera thread
