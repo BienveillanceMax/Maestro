@@ -23,7 +23,7 @@ PINCH_THRESHOLD = 0.05
 # Duration to hold pinch before triggering (in seconds)
 TRIGGER_HOLD_TIME = 1.0
 # URL of the Java service trigger
-JAVA_TRIGGER_URL = "http://maestro-app:8080/api/trigger"
+JAVA_TRIGGER_URL = "http://locahost:8080/api/trigger"
 
 # --- MediaPipe Setup ---
 # Initialize the Hand Landmarker

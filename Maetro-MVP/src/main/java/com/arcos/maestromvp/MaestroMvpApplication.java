@@ -40,8 +40,8 @@ public class MaestroMvpApplication
         //userProfileManager.completeUserProfile(userProfile);
 
 
-        orchestrator.run(userProfile);
-        System.out.println("Application started. Waiting for triggers via /api/trigger");
+        //orchestrator.run(userProfile);
+        //System.out.println("Application started. Waiting for triggers via /api/trigger");
     }
 
 }

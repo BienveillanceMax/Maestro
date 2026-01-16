@@ -44,7 +44,7 @@ services:
     devices:
       - "/dev/video0:/dev/video0"
     environment:
-      - PYTHONUNBUFFERED=1
+      - PYTHONUNBUFFERED=1f
     restart: unless-stopped
     logging:
       driver: "none"
