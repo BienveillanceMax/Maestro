@@ -14,6 +14,7 @@ import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManag
 import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.format.StandardAudioDataFormats;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 import jakarta.annotation.PostConstruct;
@@ -32,6 +33,7 @@ public class LavaplayerAudioService implements AudioService {
     @PostConstruct
     public void init() {
         playerManager = new DefaultAudioPlayerManager();
+        playerManager.getConfiguration().setOutputFormat(StandardAudioDataFormats.COMMON_PCM_S16_BE);
 
         // Register sources manually to use the updated YouTube source manager
         YoutubeAudioSourceManager youtube = new YoutubeAudioSourceManager(true);
