@@ -76,13 +76,13 @@ public class LavaplayerAudioService implements AudioService {
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
-                 if (!playlist.getTracks().isEmpty()) {
-                     AudioTrack track = playlist.getTracks().get(0);
-                     log.info("Playlist loaded, playing first track: {}", track.getInfo().title);
-                     scheduler.queue(track);
-                 } else {
-                     log.warn("Playlist empty for query: {}", query);
-                 }
+                if (!playlist.getTracks().isEmpty()) {
+                    AudioTrack track = playlist.getTracks().get(0);
+                    log.info("Playlist loaded, playing first track: {}", track.getInfo().title);
+                    scheduler.queue(track);
+                } else {
+                    log.warn("Playlist empty for query: {}", query);
+                }
             }
 
             @Override
