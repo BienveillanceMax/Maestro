@@ -2,7 +2,7 @@
 
 **Maestro** is an intelligent, agentic music orchestrator that curates and plays music based on your real-time mood, visual context, and musical preferences. By combining computer vision, local LLMs, and cloud-based cognitive services, Maestro creates a personalized auditory atmosphere that adapts to your environment.
 
-## 🚀 Features
+## Features
 
 *   **Visual Context Awareness**: Analyzes your environment using a webcam to understand the scene (e.g., working, relaxing, exercising).
 *   **Mood Detection**: Infers user mood from visual cues and contextual data, as of now unimplemented.
@@ -11,7 +11,7 @@
 *   **Multi-Modal Analysis**: Combines Azure Computer Vision (for factual tagging) and Moondream (for qualitative scene description).
 *   **Hybrid Audio Playback**: Supports audio playback via Lavalink/YouTube and Spotify.
 
-## 🏗 Architecture
+## Architecture
 
 Maestro operates as a set of containerized microservices:
 
@@ -20,7 +20,7 @@ Maestro operates as a set of containerized microservices:
 *   **Ollama**: Local inference server running the `moondream` model for visual understanding.
 *   **Frontend (React/Vite)**: A lightweight interface to view the camera feed and system status.
 
-## 🛠 Prerequisites
+## Prerequisites
 
 *   **Docker** & **Docker Compose**
 *   **Webcam** (mapped to `/dev/video0` in the container)
@@ -29,7 +29,7 @@ Maestro operates as a set of containerized microservices:
     *   **Mistral AI** (API Key)
     *   **Spotify** (Client ID & Secret)
 
-## ⚙️ Configuration
+## Configuration
 
 Create a `.env` file in the root directory or export the following environment variables before running:
 
@@ -39,7 +39,7 @@ AZURE_VISION_KEY="your_azure_key"
 MISTRAL_API_KEY="your_mistral_key"
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 
 1.  **Set your environment variables** (as shown above).
@@ -67,7 +67,7 @@ MISTRAL_API_KEY="your_mistral_key"
         *   🔵 **Blue**: Cooldown (Wait 5 seconds).
 3.  **Listen**: Maestro will analyze the scene and start playing a curated playlist suited to the moment.
 
-## 📂 Project Structure
+## Project Structure
 
 *   `Maetro-MVP/`: Java Spring Boot backend application.
 *   `visual-service/`: Python Flask application for Computer Vision.
